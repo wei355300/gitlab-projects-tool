@@ -6,17 +6,19 @@ pip install --upgrade python-gitlab
 ref: https://python-gitlab.readthedocs.io/en/stable/
 
 """
+import json
 import os
 import subprocess
 from concurrent.futures.process import ProcessPoolExecutor
+from pprint import pprint
 
 import gitlab
 
 # gitlab 代码仓库地址
-url_gitlab = 'http://code.petkit.cn'
+# url_gitlab = 'http://code.petkit.cn'
 # gitlab 私有令牌
-private_token = 'Wm4zLPS_8e7xBCZdcss1'
-dst_projects_dir = os.path.expanduser('~/gitprojects')
+# private_token = 'Wm4zLPS_8e7xBCZdcss1'
+# dst_projects_dir = os.path.expanduser('~/gitprojects')
 
 ignore_groups = ['test',
                  'server.app', 'go', 'olab', 'server.doctor', 'star_chain',
@@ -35,6 +37,13 @@ ignore_file_ext = ['.log', '.txt', '.min.js', '.zip', '.tar', '.gz', '.png', '.j
 cmd_counter = 'git ls-files | grep -v -e "public/" -e "bin/" -e "libs/" -e "lib/" -e "dist/" -e "plugins/" -e "static/" -e "assets/" -e ".log$" -e ".txt$" -e "min.js" -e ".zip$" -e ".jar$" -e ".gz$" -e ".tar$" -e ".png$" -e ".jpg$" -e ".ico$" -e ".svg$"  -e ".swf$" -e "^\."'
 
 
+def read_local_config(json_file):
+    """读本本地配置文件"""
+    with open(json_file) as f:
+        _config = json.load(f)
+    return _config
+
+
 def _is_ignore_group(group_name):
     for ig in ignore_groups:
         if ig == group_name:
@@ -47,7 +56,7 @@ def _is_ignore_project(project_name):
             return True
 
 
-def list_projects_in_group(group):
+def _list_projects_in_group(group):
     """拉取 gitlab 的 Group 信息, 创建本地目录结构
 
     :param group:
@@ -59,13 +68,13 @@ def list_projects_in_group(group):
     return group.projects.list(all=True)
 
 
-def pull_project(project, path):
+def _pull_project(project, path):
     project_name = project.name
     # dst_projects_path = os.path.join(dst_projects_dir, project_name)
-    if len(path) == 0:
-        path = dst_projects_dir
+    # if len(path) == 0:
+    #     path = dst_projects_dir
 
-    #dst_projects_path = os.path.join(path, project_name)
+    # dst_projects_path = os.path.join(path, project_name)
     if os.path.exists(os.path.join(path, ".git")):
         print(""" {dst_projects_path} exists, try update """.format(
             dst_projects_path=path,
@@ -93,12 +102,12 @@ def _source_code_counter(project, path):
     return count_of_line
 
 
-def source_code_counter(project, path):
-    pull_project(project, path=path)
-    return _source_code_counter(project, path=path)
+# def _source_code_counter(project, path):
+#     _pull_project(project, path=path)
+#     return _source_code_counter(project, path=path)
 
 
-def _do(_gitlab):
+def _do(_gitlab, local_projects_dir):
     groups = _gitlab.groups.list(all=True)
     lines_total = 0
     for _group in groups:
@@ -107,19 +116,20 @@ def _do(_gitlab):
             print("ignore group: {group_name}".format(group_name=_group.name))
             continue
 
-        if not os.path.exists(os.path.join(dst_projects_dir, _group.name)):
-            os.makedirs(os.path.join(dst_projects_dir, _group.name))
+        if not os.path.exists(os.path.join(local_projects_dir, _group.name)):
+            os.makedirs(os.path.join(local_projects_dir, _group.name))
 
-        _projects = list_projects_in_group(_group)
+        _projects = _list_projects_in_group(_group)
 
         for _project in _projects:
             if _is_ignore_project(_project.name):
                 continue
-            _project_path = os.path.join(dst_projects_dir, _group.name, _project.name)
+            _project_path = os.path.join(local_projects_dir, _group.name, _project.name)
             if not os.path.exists(_project_path):
                 os.makedirs(_project_path)
 
-            lines_of_project = source_code_counter(_project, _project_path)
+            _pull_project(_project, _project_path)
+            lines_of_project = _source_code_counter(_project, _project_path)
             lines_total += lines_of_project
             with open('ret.csv', 'a') as f:
                 f.write("""{group_name},{project_id},{project_name},{num_of_lines}{linesep}""".format(
@@ -134,10 +144,13 @@ def _do(_gitlab):
 
 
 if __name__ == '__main__':
+    config = read_local_config('config.json')
+
     task_list = list()
     ret = {}
-    gl = gitlab.Gitlab(url_gitlab, private_token=private_token, api_version='4')
-    _do(gl)
+    gl = gitlab.Gitlab(config['git_lab_url'], private_token=config['git_lab_private_token'],
+                       api_version=config['git_lab_version'])
+    _do(gl, local_projects_dir=config['local_project_dir'])
 
     # projects = gl.projects.list(all=True)
     # for project_index, project in enumerate(projects):
