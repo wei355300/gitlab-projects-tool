@@ -36,12 +36,8 @@ def _source_code_counter(path):
     return count_of_line
 
 
-if __name__ == '__main__':
-    config = read_local_config('config.json')
-    _local_project_dir = config['local_project_dir']
-    pull_projects(git_lab_url=config['git_lab_url'], git_lab_private_token=config['git_lab_private_token'], git_lab_version=config['git_lab_version'], local_project_dir=config['local_project_dir'])
+def _count():
     lines_total = 0
-
     with os.scandir(_local_project_dir) as _groups:
         for _group in _groups:
             if _group.is_dir():
@@ -50,7 +46,8 @@ if __name__ == '__main__':
                     for _project in _projects:
                         if _project.is_dir():
                             print(_project.path)
-                            print("count {group_name},{project_name}".format(group_name=_group.name, project_name=_project.name))
+                            print("count {group_name},{project_name}".format(group_name=_group.name,
+                                                                             project_name=_project.name))
                             _lines_of_project = _source_code_counter(_project.path)
                             lines_total += _lines_of_project
                             with open('ret.csv', 'a') as f:
@@ -61,3 +58,16 @@ if __name__ == '__main__':
                                     linesep=os.linesep,
                                 ))
     print("total lines: {total_lines}".format(total_lines=lines_total))
+
+
+if __name__ == '__main__':
+
+    counter = False
+
+    config = read_local_config('config.json')
+    _local_project_dir = config['local_project_dir']
+    pull_projects(git_lab_url=config['git_lab_url'], git_lab_private_token=config['git_lab_private_token'],
+                  git_lab_version=config['git_lab_version'], local_project_dir=config['local_project_dir'])
+
+    if counter:
+        _count

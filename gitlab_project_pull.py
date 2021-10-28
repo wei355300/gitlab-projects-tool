@@ -19,8 +19,7 @@ ignore_groups = ['test',
 ignore_projects = ['com-petkit-cdn', 'mantas-docker', 'k8s-yaml', 'com-petkit-website-food',
                    'com-petkit-website-web', 'com.petkit.fanli', 'com.petkit.pstore',
                    'com-petkit-app-html', 'com-petkit-pstore-web', 'com-petkit-pstore-mobile',
-                   'com-mantas-ma',
-                   "com-petkit-food-doc"]
+                   'com-mantas-ma']
 
 
 def _is_ignore_group(group_name):
