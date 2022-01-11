@@ -12,7 +12,7 @@ import gitlab
 
 
 ignore_groups = ['test',
-                 'server.app', 'go', 'olab', 'server.doctor', 'star_chain',
+                 'go', 'olab', 'server.doctor', 'star_chain',
                  'app.android', 'app.ios', 'app', 'server.sip', 'smartdevice',
                  'Hardware', 'homestation', 'homestation.libs',
                  'fit']

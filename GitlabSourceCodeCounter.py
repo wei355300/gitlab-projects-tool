@@ -15,6 +15,7 @@ ignore_dirs = ['public/', 'bin/', 'libs/', 'lib/', 'dist/', 'plugins/', 'static/
 
 ignore_file_ext = ['.log', '.txt', '.min.js', '.zip', '.tar', '.gz', '.png', '.jpg', 'ico', '.svg', '.swf', '^\\.']
 
+# 统计 gitlab 里的代码行数
 cmd_counter = 'git ls-files | grep -v -e "public/" -e "bin/" -e "libs/" -e "lib/" -e "dist/" -e "plugins/" -e "static/" -e "assets/" -e ".log$" -e ".txt$" -e "min.js" -e ".zip$" -e ".jar$" -e ".gz$" -e ".tar$" -e ".png$" -e ".jpg$" -e ".ico$" -e ".svg$"  -e ".swf$" -e "^\."'
 
 
