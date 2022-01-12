@@ -39,6 +39,7 @@ def _source_code_counter(path):
 
 def _count():
     lines_total = 0
+    # fixme 未考虑 group 多层嵌套group(sub group)的情况
     with os.scandir(_local_project_dir) as _groups:
         for _group in _groups:
             if _group.is_dir():
