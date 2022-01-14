@@ -1,6 +1,5 @@
 """
 1. 同步 gitlab 上的所有项目
-2. 计算 gitlab 上的代码行数
 
 pip install --upgrade python-gitlab
 ref: https://python-gitlab.readthedocs.io/en/stable/
