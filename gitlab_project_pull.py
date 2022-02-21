@@ -43,8 +43,10 @@ def _pull_project(project, parent_dir):
         os.makedirs(_project_path)
 
     if os.path.exists(os.path.join(_project_path, ".git")):
+        print("pull project: {project_name}".format(project_name=_project_name))
         subprocess.call(""" cd {_project_path} && git pull """.format(_project_path=_project_path), shell=True)
     else:
+        print("clone project: {project_name}".format(project_name=_project_name))
         project_url = project.http_url_to_repo
         subprocess.call(['git', 'clone', project_url, _project_path])
 
