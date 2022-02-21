@@ -34,10 +34,15 @@ def _is_ignore_project(project_name):
             return True
 
 
+def _replace_name(name):
+    return name.replace(".", "_")
+
+
 def _pull_project(project, parent_dir):
     _project_name = project.name
     if _is_ignore_project(_project_name):
         return
+    _project_name = _replace_name(_project_name)
     _project_path = os.path.join(parent_dir, _project_name)
     if not os.path.exists(_project_path):
         os.makedirs(_project_path)
@@ -61,8 +66,8 @@ def _pull_group(_gitlab, _group, _parent_dir):
         print("Skip group: {group_name}".format(group_name=_group_name))
         return
 
+    _group_name = _replace_name(_group_name)
     _group_path = os.path.join(_parent_dir, _group_name)
-
     if not os.path.exists(_group_path):
         os.makedirs(os.path.join(_parent_dir, _group_name))
 
