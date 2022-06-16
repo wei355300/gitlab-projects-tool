@@ -16,19 +16,20 @@ ignore_groups = ['test',
                  'app.android', 'app.ios', 'app', 'server.sip', 'smartdevice',
                  'Hardware', 'homestation', 'homestation.libs',
                  'fit']
+
 ignore_projects = ['com-petkit-cdn', 'mantas-docker', 'k8s-yaml', 'com-petkit-website-food',
                    'com-petkit-website-web', 'com.petkit.fanli', 'com.petkit.pstore',
                    'com-petkit-app-html', 'com-petkit-pstore-web', 'com-petkit-pstore-mobile',
                    'com-mantas-ma']
 
 
-def _is_ignore_group(group_name):
+def _is_ignored_group(group_name):
     for ig in ignore_groups:
         if ig == group_name:
             return True
 
 
-def _is_ignore_project(project_name):
+def _is_ignored_project(project_name):
     for ip in ignore_projects:
         if ip == project_name:
             return True
@@ -39,8 +40,10 @@ def _replace_name(name):
 
 
 def _pull_project(project, parent_dir):
+    # return True
+
     _project_name = project.name
-    if _is_ignore_project(_project_name):
+    if _is_ignored_project(_project_name):
         return
     _project_name = _replace_name(_project_name)
     _project_path = os.path.join(parent_dir, _project_name)
@@ -62,14 +65,14 @@ def _pull_group(_gitlab, _group, _parent_dir):
 
     print("pull group: {group_name}".format(group_name=_group_name))
 
-    if _is_ignore_group(_group_name):
+    _group_name_replaced = _replace_name(_group_name)
+    _group_path = os.path.join(_parent_dir, _group_name_replaced)
+    if not os.path.exists(_group_path):
+        os.makedirs(_group_path)
+
+    if _is_ignored_group(_group_name):
         print("Skip group: {group_name}".format(group_name=_group_name))
         return
-
-    _group_name = _replace_name(_group_name)
-    _group_path = os.path.join(_parent_dir, _group_name)
-    if not os.path.exists(_group_path):
-        os.makedirs(os.path.join(_parent_dir, _group_name))
 
     _sub_groups = _group.subgroups.list()
 
@@ -89,7 +92,8 @@ def _pull_group(_gitlab, _group, _parent_dir):
 
 # 通过递归的方式拉取 group 及其子组的 project
 def _pull(_gitlab, local_projects_dir):
-    groups = _gitlab.groups.list(all=True)
+    # 仅取当前层级的group, subgroup由递归获取
+    groups = _gitlab.groups.list(all=True, top_level_only=True)
 
     if not len(groups):
         print('no groups exists; break!')
@@ -107,6 +111,8 @@ def _read_local_config(json_file):
 
 
 def pull_projects(git_lab_url, git_lab_private_token, git_lab_version, local_project_dir):
+    if not os.path.exists(local_project_dir):
+        os.makedirs(local_project_dir)
     gl = gitlab.Gitlab(git_lab_url, private_token=git_lab_private_token, api_version=git_lab_version)
     _pull(gl, local_project_dir)
 
