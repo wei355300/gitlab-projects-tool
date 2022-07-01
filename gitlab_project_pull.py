@@ -4,6 +4,9 @@
 pip install --upgrade python-gitlab
 ref: https://python-gitlab.readthedocs.io/en/stable/
 
+todo
+    a. gitlab上的group或project删除了, 本地也需要删除
+
 """
 import os
 import subprocess
