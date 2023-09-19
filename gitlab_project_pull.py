@@ -14,7 +14,7 @@ import gitlab
 import json
 
 
-ignore_groups = ['test',
+ignore_groups = [
                  'go', 'olab', 'server.doctor', 'star_chain',
                  'app.android', 'app.ios', 'app', 'server.sip', 'smartdevice',
                  'Hardware', 'homestation', 'homestation.libs',

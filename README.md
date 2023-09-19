@@ -6,9 +6,12 @@
 
 ```python
 # 将本地分支切换为 production 分支
+```
 python3 git_branch_switch.py -u ~/workspace/petkit-chain/com-petkit-food production
+```
 
 # 将目录及子目录(-i 参数)都切换为 production 分支
+```
 python3 git_branch_switch.py -u -i ~/workspace/petkit-chain/com-petkit-food production
 ```
 
@@ -23,4 +26,9 @@ python3 GitlabSourceCodeCounter.py
 
 ## Gitlab
 
-`todo`
+ref: https://python-gitlab.readthedocs.io/en/stable/
+
+```
+pip install --upgrade python-gitlab
+```
+

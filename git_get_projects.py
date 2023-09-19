@@ -42,10 +42,12 @@ def _get_projects(url_projects_of_group):
 def _update_project(project_name, branch_name):
     # todo
     # 项目存在, 更新分支内容: pull
+    pprint('_update_project');
 
 def _clone_project(url):
     # todo
     # 项目不存在, clone 项目: clone
+    pprint('_clone_project');
 
 def _is_exist_project_on_local(project_name):
     # todo
@@ -54,6 +56,7 @@ def _is_exist_project_on_local(project_name):
 
 def _count_lines():
     # git ls-files | xargs cat | wc -l
+    pprint('_count_lines');
 
 def do():
     group_list = _get_all_groups(url_groups)
